@@ -1,8 +1,9 @@
 {% extends "layout.html" %}
 {% block title %}Sign In{% endblock %}
 {% block body %}
-  <h2>Sign In</h2>
+  <h2 class=login>Sign In</h2>
   {% if error %}<div class=error><strong>Error:</strong> {{ error }}</div>{% endif %}
+  <div class=login>
   <form action="" method=post>
     <dl>
       <dt>Username:
@@ -12,5 +13,6 @@
     </dl>
     <div class=actions><input type=submit value="Sign In"></div>
   </form>
+  </div>
 {% endblock %}
 

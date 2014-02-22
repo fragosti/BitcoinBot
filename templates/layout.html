@@ -3,7 +3,7 @@
   min-height: 500px;
   height: auto;
   /* Negative indent footer by its height */
-  margin: 0 auto -60px;
+
   /* Pad bottom by footer height */
   padding: 0 0 0px;
 }
@@ -16,14 +16,24 @@
 
 position:relative;
 left: 40%;}
+.label-success{ 
+  position: relative;
+  left:45%;
+font-size: 15px;
+  font-family: Helvetica;}
+.login{color: black; font-family: Helvetica; position:relative; left:40%;}
 </style>
 </head>
-<title>{% block title %}Welcome{% endblock %} | MiniTwit</title>
+<title>{% block title %}Welcome{% endblock %} | Bitcoinbott</title>
 <!--<link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/style.css') }}"> -->
 <script src="http://code.jquery.com/jquery-1.11.0.min.js"> </script>
 <script src="{{ url_for('static', filename='bootstrap/bootstrap/dist/js/bootstrap.min.js') }}"> </script>
-
+<script src="../static/js/Chart.min.js"></script>
+<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+<script src="../static/js/bitchart.js"></script>
 <link href="{{ url_for('static', filename='bootstrap/bootstrap/dist/css/bootstrap.min.css') }}" rel="stylesheet">
+
+
 
 <div class=page>
   <h1><img src="../static/img/Bitcoin.png"> </h1>
@@ -75,18 +85,28 @@ left: 40%;}
     <a href="{{ url_for('login') }}">sign in</a>
   {% endif %}
   </div> -->
+
+
   <div id="wrap">
+ 
   {% with flashes = get_flashed_messages() %}
+
     {% if flashes %}
-      <ul class=flashes>
+ 
+      <ul >
       {% for message in flashes %}
-        <li>{{ message }}
+        <li class="label label-success" >{{ message }}
+
       {% endfor %}
+      
       </ul>
+    
     {% endif %}
   {% endwith %}
   <div class=body>
   {% block body %}{% endblock %}
+
+
   </div>
   </div>
   </div>
