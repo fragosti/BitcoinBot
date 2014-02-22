@@ -243,7 +243,7 @@ def logout():
     """Logs the user out."""
     flash('You were logged out')
     session.pop('user_id', None)
-    return redirect(url_for('public_timeline'))
+    return redirect(url_for('landing_page'))
 
 
 # add some filters to jinja
