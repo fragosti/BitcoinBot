@@ -26,8 +26,6 @@ app.config.update(dict(
     ))
 
 
-
-
 def get_db():
     """Opens a new database connection if there is none yet for the
     current application context.
@@ -90,13 +88,13 @@ def before_request():
 
 
 @app.route('/')
-def timeline():
+def dashboard():
     """Shows a users timeline or if no user is logged in it will
     redirect to the public timeline.  This timeline shows the user's
     messages as well as all the messages of followed users.
     """
     if not g.user:
-        return redirect(url_for('public_timeline'))
+        return redirect(url_for('landing_page'))
     return render_template('timeline.html', messages=query_db('''
         select message.*, user.* from message, user
         where message.author_id = user.user_id and (
@@ -105,6 +103,11 @@ def timeline():
                                     where who_id = ?))
         order by message.pub_date desc limit ?''',
         [session['user_id'], session['user_id'], PER_PAGE]))
+
+
+@app.route('/landing')
+def landing_page():
+    return render_template('landing.html')
 
 
 @app.route('/public')
@@ -188,7 +191,7 @@ def add_message():
 def login():
     """Logs the user in."""
     if g.user:
-        return redirect(url_for('timeline'))
+        return redirect(url_for('dashboard'))
     error = None
     if request.method == 'POST':
         user = query_db('''select * from user where
@@ -201,7 +204,7 @@ def login():
         else:
             flash('You were logged in')
             session['user_id'] = user['user_id']
-            return redirect(url_for('timeline'))
+            return redirect(url_for('dashboard'))
     return render_template('login.html', error=error)
 
 
@@ -209,7 +212,7 @@ def login():
 def register():
     """Registers the user."""
     if g.user:
-        return redirect(url_for('timeline'))
+        return redirect(url_for('dashboard'))
     error = None
     if request.method == 'POST':
         if not request.form['username']:

@@ -3,9 +3,9 @@
   {% if request.endpoint == 'public_timeline' %}
     Public Timeline
   {% elif request.endpoint == 'user_timeline' %}
-    {{ profile_user.username }}'s Timeline
+    {{ g.user.username }}'s Timeline
   {% else %}
-    My Timeline
+    My Dashboard
   {% endif %}
 {% endblock %}
 {% block body %}
