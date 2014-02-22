@@ -95,14 +95,16 @@ def dashboard():
     """
     if not g.user:
         return redirect(url_for('landing_page'))
-    return render_template('timeline.html', messages=query_db('''
-        select message.*, user.* from message, user
-        where message.author_id = user.user_id and (
-            user.user_id = ? or
-            user.user_id in (select whom_id from follower
-                                    where who_id = ?))
-        order by message.pub_date desc limit ?''',
-        [session['user_id'], session['user_id'], PER_PAGE]))
+
+    message = query_db('''
+        select user.*, api_key.* from user, api_key
+        where user.user_id = ? and 
+            api_key.who_id = ? ''',
+        [session['user_id'], session['user_id']])
+    if len(message) > 0:
+        message = message[0]
+
+    return render_template('timeline.html', message=message)
 
 
 @app.route('/landing')
@@ -170,6 +172,21 @@ def unfollow_user(username):
     db.commit()
     flash('You are no longer following "%s"' % username)
     return redirect(url_for('user_timeline', username=username))
+
+@app.route('/add_key', methods=['POST'])
+def add_key():
+    """Add keys for this user"""
+    if 'user_id' not in session:
+        redirect(url_for('landing_page'))
+    if request.form['key']:
+        db = get_db()
+        db.execute('''insert into api_key (who_id, key, secret)
+            values (?, ?, ?)''', (session['user_id'], 
+                                request.form['key'],  
+                                request.form['secret']))
+        db.commit()
+        flash('Your keys were added')
+        return redirect(url_for('dashboard'))
 
 
 @app.route('/add_message', methods=['POST'])
@@ -252,5 +269,5 @@ app.jinja_env.filters['gravatar'] = gravatar_url
 
 
 if __name__ == '__main__':
-    #init_db()
+    init_db()
     app.run()

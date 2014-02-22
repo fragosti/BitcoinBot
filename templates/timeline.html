@@ -4,4 +4,23 @@
 {% endblock %}
 {% block body %}
   <h2>{{ self.title() }} </h2>
+  {% if message.key %}
+  <div> These are your API keys </div>
+  <div>{{ message.key }}</div>
+  <div>{{ message.secret }}</div>
+  {% else %}
+  <div id="key_form">
+  <h4> Add your BTC-E API key before you can trade</h4>
+    <form action="{{ url_for('add_key') }}" method=post>
+    <dl>
+      <dt>Key
+      <dd><input type=text name=key size=50 value="{{ request.form.key }}" >
+      <dt>Secret
+      <dd><input type=text name=secret size=50 value="{{ request.form.secret }}">
+    </dl>
+    <div class=actions><input type=submit value="Save"></div>
+  </form>
+  </div>
+  {% endif %}
+
 {% endblock %}
