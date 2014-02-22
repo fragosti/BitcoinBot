@@ -173,12 +173,12 @@ def unfollow_user(username):
     flash('You are no longer following "%s"' % username)
     return redirect(url_for('user_timeline', username=username))
 
-@app.route('/add_key', methods=['POST'])
+@app.route('/add_key', methods=['POST', 'GET'])
 def add_key():
     """Add keys for this user"""
     if 'user_id' not in session:
         redirect(url_for('landing_page'))
-    if request.form['key']:
+    if request.form['key'] and request.method == 'POST':
         db = get_db()
         db.execute('''insert into api_key (who_id, key, secret)
             values (?, ?, ?)''', (session['user_id'], 
@@ -189,19 +189,6 @@ def add_key():
         return redirect(url_for('dashboard'))
 
 
-@app.route('/add_message', methods=['POST'])
-def add_message():
-    """Registers a new message for the user."""
-    if 'user_id' not in session:
-        abort(401)
-    if request.form['text']:
-        db = get_db()
-        db.execute('''insert into message (author_id, text, pub_date)
-          values (?, ?, ?)''', (session['user_id'], request.form['text'],
-                                int(time.time())))
-        db.commit()
-        flash('Your message was recorded')
-    return redirect(url_for('timeline'))
 
 
 @app.route('/login', methods=['GET', 'POST'])
