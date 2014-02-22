@@ -7,7 +7,15 @@
 
 
   <div id="key_form">
-    
-
+  <h4> Insert your BTC-E API key </h4>
+    <form action="{{ url_for('add_key') }}" method=post>
+    <dl>
+      <dt>Key
+      <dd><input type=text name=key size=50 value="{{ request.form.key }}" >
+      <dt>Secret
+      <dd><input type=text name=secret size=50 value="{{ request.form.secret }}">
+    </dl>
+    <div class=actions><input type=submit value="Save"></div>
+  </form>
   </div>
 {% endblock %}

@@ -6,11 +6,11 @@ create table user (
   pw_hash text not null
 );
 
-drop table if exists follower;
-create table follower (
+drop table if exists api_key;
+create table api_key (
   who_id integer,
   key text not null,
-  secret text not null,
+  secret text not null
 );
 
 drop table if exists message;

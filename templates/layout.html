@@ -41,7 +41,7 @@
     <a href="{{ url_for('logout') }}">sign out [{{ g.user.username }}]</a>
   {% else %}
     <a href="{{ url_for('register') }}">sign up</a> |
-    <a href="{{ url_for('login') }}">sign in</a>
+    <a href="{{ url_for('login') }}">Save</a>
   {% endif %}
   </div>
   {% with flashes = get_flashed_messages() %}
