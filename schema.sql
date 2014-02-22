@@ -20,3 +20,15 @@ create table message (
   text text not null,
   pub_date integer
 );
+
+drop table if exists bot;
+create table bot (
+  bot_id integer primary key autoincrement,
+  owner_id integer not null,
+  trade_amount integer not null,
+  floor integer not null,
+  ceiling integer not null,
+  abs_floor integer not null,
+  abs_ceiling integer not null,
+  algorithm text not null
+  );
