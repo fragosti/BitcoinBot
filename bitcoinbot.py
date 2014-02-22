@@ -95,11 +95,16 @@ def dashboard():
     """
     if not g.user:
         return redirect(url_for('landing_page'))
-    return render_template('timeline.html', messages=query_db('''
+
+    message = query_db('''
         select user.*, api_key.* from user, api_key
         where user.user_id = ? and 
             api_key.who_id = ? ''',
-        [session['user_id'], session['user_id']]))
+        [session['user_id'], session['user_id']])
+    if len(message) > 0:
+        message = message[0]
+
+    return render_template('timeline.html', message=message)
 
 
 @app.route('/landing')
