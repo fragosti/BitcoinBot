@@ -176,15 +176,20 @@
   {% for bot in bots %}
 
   <div class="panel panel-default">
-    <div class="panel-heading">
+    <div class="panel-heading ">
       <h4 class="panel-title">
+     
+
         <a data-toggle="collapse" data-parent="#accordion" href="#{{ bot.bot_id }}">
-          {{ bot.bot_name }}
+          {{ bot.bot_name }}{%if bot.status == "active" %} 
+       <span class="label label-success ">Active</span>
+       {% endif%}
         </a>
-      </h4>
+      </h4> 
     </div>
+    
     <div id="{{ bot.bot_id }}" class="panel-collapse collapse in">
-      <div class="panel-body">
+           <div class="panel-body ">
        <div class="btn-group" data-toggle="buttons">
        {%if bot.status == "active" %} 
 

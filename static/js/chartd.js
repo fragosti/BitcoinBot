@@ -70,6 +70,7 @@ var svg = d3.select("#chart").append("svg")
   .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
     
+    
   console.log(jsonData)
   x.domain(d3.extent(jsonData, function(d) { return d.date; }));
   y.domain(d3.extent(jsonData, function(d) { return d.last; }));
