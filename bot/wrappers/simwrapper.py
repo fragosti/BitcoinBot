@@ -34,6 +34,9 @@ class BTCESimulationApi():
         sell_amount = amount/sell_price
         return self.adaptedAPI.trade(pair, "sell", sell_price, sell_amount, settings.connection)
 
+    def getTradeHistory(self):
+        return self.adaptedAPI.tradeHistory()
+
     @staticmethod
     def getTicker(pair):
         return btceapi.getTicker(pair, settings.connection)

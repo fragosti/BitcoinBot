@@ -22,6 +22,7 @@ DEBUG = True
 SECRET_KEY = 'development key'
 
 BOT_DICT = {}
+HANDLER = btceapi.KeyHandler(resaveOnDeletion=True)
 
 # create our little application :)
 app = Flask(__name__)
@@ -54,12 +55,13 @@ def get_db():
     return top.sqlite_db
 
 def new_bot(algorithm):
-    api_key = get_api_key(session['user_id'])
-    handler = btceapi.KeyHandler(resaveOnDeletion=True)
-    handler.addKey(api_key['key'], api_key['secret'], 1)
-    api = simwrapper.BTCESimulationApi(handler)
-    algorithm = BasicAlgo(api)
-    return Bot(algorithm, "ppc_usd")
+    api = simwrapper.BTCESimulationApi(HANDLER)
+    algorithm_obj = None
+    if algorithm == 'basic':
+        algorithm_obj = BasicAlgo(api)
+    if algorithm == 'random':
+        algorithm_obj = BasicAlgo(api)
+    return Bot(algorithm_obj, "ppc_usd")
 
 def get_api_key(id):
     key = query_db('''
@@ -109,6 +111,17 @@ def query_db(query, args=(), one=False):
     cur = get_db().execute(query, args)
     rv = cur.fetchall()
     return (rv[0] if rv else None) if one else rv
+
+@app.route('/api/transaction_history')
+def get_transaction_history():
+    if request.method == 'GET':
+        update_key()
+        api = simwrapper.BTCESimulationApi(HANDLER)
+        print api.getTradeHistory()
+    
+    return "hello"
+
+
 
 
 def get_user_id(username):
@@ -271,11 +284,21 @@ def stop_bot(bot_id):
             ('inactive', bot_id))
         db.commit()
         name = get_bot_name(bot_id)
-        BOT_DICT[str(session['user_id'])+name].start()
+        BOT_DICT[str(session['user_id'])+name].stop()
         flash('You stopped your bot!')
         redirect(url_for('dashboard'))
 
-
+@app.route('/bot/delete/<bot_id>')
+def delete_bot(bot_id):
+    if request.method == 'GET':
+        flash("You deleted bot " + get_bot_name(bot_id))
+        db = get_db()
+        db.execute('''
+            delete from bot
+            where bot_id = ?
+            ''', [bot_id])
+        db.commit()
+        return redirect(url_for('dashboard'))
 
 @app.route('/add_key', methods=['POST', 'GET'])
 def add_key():
@@ -289,9 +312,13 @@ def add_key():
                                 request.form['key'],  
                                 request.form['secret']))
         db.commit()
+        update_key()
         flash('Your keys were added')
         return redirect(url_for('dashboard'))
 
+def update_key():
+    api_key = get_api_key(session['user_id'])
+    HANDLER.addKey(str(api_key['key']), str(api_key['secret']), 1)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -311,6 +338,7 @@ def login():
         else:
             flash('You were logged in')
             session['user_id'] = user['user_id']
+            update_key()
             init_bots()
             return redirect(url_for('dashboard'))
     return render_template('login.html', error=error)
