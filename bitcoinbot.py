@@ -173,6 +173,11 @@ def unfollow_user(username):
     flash('You are no longer following "%s"' % username)
     return redirect(url_for('user_timeline', username=username))
 
+@app.route('/bot', methods=['POST', 'GET'])
+def bot():
+    pass
+
+
 @app.route('/add_key', methods=['POST', 'GET'])
 def add_key():
     """Add keys for this user"""
