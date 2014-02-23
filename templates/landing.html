@@ -47,7 +47,7 @@
                     <div class="clearfix"></div>
                     <h2 class="section-heading">The Bot Works For You!
                         </h2>
-                    <p class="lead">Set the <b>trading parameters </b>and let your bot make money off the highs and lows. <a target="_blank" href="http://join.deathtothestockphoto.com/">Give it a try!</a></p>
+                    <p class="lead">Set the <b>trading parameters </b>and let your bot make money off the highs and lows. <a target="_blank" href="{{ url_for('dashboard') }}">Give it a try!</a></p>
                 </div>
                 <div class="col-lg-5 col-lg-offset-2 col-sm-6">
                     <img class="img-responsive" src="../static/img/cat.png" alt="">
@@ -73,7 +73,7 @@
                     <p class="lead">Receive and visualize live data from the BTC-E Exchange. Our graph automatically updates every 10 seconds with the value of Bitcoin, giving you instant access to the data that matters.</p>
                 </div>
                 <div class="col-lg-5 col-sm-pull-6  col-sm-6">
-                    <img class="img-responsive" src="img/doge.png" alt="">
+                    <div id="chart" class="img-responsive"> </div>
                 </div>
             </div>
 

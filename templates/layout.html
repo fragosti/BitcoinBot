@@ -22,9 +22,13 @@ left: 40%;}
 font-size: 15px;
   font-family: Helvetica;}
 .login{color: black; font-family: Helvetica; position:relative; left:40%;}
+.limit{
+  width: 300px
+
+}
 </style>
 </head>
-<title>{% block title %}Welcome{% endblock %} | Bitcoinbott</title>
+<title>{% block title %}Welcome{% endblock %} | Bitcoinbot</title>
 <!--<link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/style.css') }}"> -->
 <script src="http://code.jquery.com/jquery-1.11.0.min.js"> </script>
 
@@ -43,6 +47,7 @@ font-size: 15px;
 <link href="{{ url_for('static', filename='font-awesome/css/font-awesome.min.css') }}" rel="stylesheet">
 
 <link href="{{ url_for('static', filename='css/chart.css') }}" rel="stylesheet">
+<link href="{{ url_for('static', filename='css/dashboard.css') }}" rel="stylesheet">
 <!-- Custom Google Web Font -->
     <link href="{{ url_for('static', filename='font-awesome/css/font-awesome.min.css') }}" rel="stylesheet">
     <link href='http://fonts.googleapis.com/css?family=Lato:100,300,400,700,900,100italic,300italic,400italic,700italic,900italic' rel='stylesheet' type='text/css'>

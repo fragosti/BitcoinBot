@@ -3,14 +3,15 @@
     {{ g.user.username }}'s Dashboard
 {% endblock %}
 {% block body %}
-  <h2 class=login>{{ self.title() }} </h2>
+
+  <h2 class=login >{{ self.title() }} </h2>
   {% if message.key %}
   <div> These are your API keys </div>
   <div>{{ message.key }}</div>
   <div>{{ message.secret }}</div>
 
   {% else %}
-  <div class=login>
+  <div class=login >
   <div id="key_form">
   <h4> Add your BTC-E API key before you can trade</h4>
     <form action="{{ url_for('add_key') }}" method=post>
@@ -25,8 +26,10 @@
   </div>
 
   </div>
+</div>
 
-  {% endif %}
+{% endif %}
+  
   
 
    <div id="page-wrapper">
@@ -99,7 +102,7 @@
           <div class="col-lg-12">
             <div class="panel panel-primary">
               <div class="panel-heading">
-                <h3 class="panel-title"><i class="fa fa-bar-chart-o"></i> Traffic Statistics: October 1, 2013 - October 31, 2013</h3>
+                <h3 class="panel-title"><i class="fa fa-bar-chart-o"></i> Live: Market Data</h3>
               </div>
               <div class="panel-body">
                   <div id="chart"> </div>
@@ -182,7 +185,7 @@
 
         <a data-toggle="collapse" data-parent="#accordion" href="#{{ bot.bot_id }}">
           {{ bot.bot_name }}{%if bot.status == "active" %} 
-       <span class="label label-success ">Active</span>
+       <span id = "shuv" class="label label-success ">Active</span>
        {% endif%}
         </a>
       </h4> 
@@ -194,13 +197,13 @@
        {%if bot.status == "active" %} 
 
   <label class="btn btn-success active">
-    <input type="radio" name="options" id="option1"> Start
+    <input type="radio" name="options" id="option1"><a id="nohigh" href="bot/start/{{bot.bot_id}}"> Start </a>
   </label>
   <label class="btn btn-warning">
-    <input type="radio" name="options" id="option2"> Stop
+    <input type="radio" name="options" id="option2"><a id="nohigh" href="bot/stop/{{bot.bot_id}}"> Stop </a>
   </label>
   <label class="btn btn-danger">
-    <input type="radio" name="options" id="option3"> Delete
+    <input type="radio" name="options" id="option3">  Delete
   </label>
   {%else%}
   <label class="btn btn-success">
@@ -308,26 +311,14 @@
       </div><!-- /#page-wrapper -->
 
     </div><!-- /#wrapper -->
- 
+ </div>
 
 
 
 
 
 
-<ul class="nav nav-tabs">
-  {% for bot in bots %}
-    <li><a href="#{{ bot.bot_id }}" data-toggle="tab">{{ bot.bot_name}}</a></li>
-  {% endfor %}
-  
-</ul>
 
-<!-- Tab panes -->
-<div class="tab-content">
-  {% for bot in bots%}
-  <div class="tab-pane" id="{{ bot.bot_id }}"> {{ bot.status}} </div>
-  {% endfor %}
-</div>
 
 
 
