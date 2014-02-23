@@ -7,10 +7,12 @@ from datetime import datetime
 from flask import Flask, request, session, url_for, redirect, \
      render_template, abort, g, flash, _app_ctx_stack
 from werkzeug import check_password_hash, generate_password_hash
-from bot import bot
+import btceapi
+from bot.wrappers import simwrapper
+from bot.bot import Bot
 from bot import defaults
 from bot.algorithms import *
-
+import settings
 
 
 # configuration
@@ -18,6 +20,8 @@ DATABASE = 'bitcoinbot.db'
 PER_PAGE = 30
 DEBUG = True
 SECRET_KEY = 'development key'
+
+BOT_DICT = {}
 
 # create our little application :)
 app = Flask(__name__)
@@ -40,11 +44,19 @@ def get_db():
         top.sqlite_db.row_factory = sqlite3.Row
     return top.sqlite_db
 
-def new_bot(key, secret, algorithm):
-    pass
+def new_bot(algorithm):
+    key = "AZGRIZYJ-H8VRF495-34H6CAF4-9UWI56WI-74U0063R" 
+    secret = "71eb80d6e1b60f4df6ae413cf36b44d1cdd30238fe82ef5a09416cfbb44e059e"
+    handler = btceapi.KeyHandler(resaveOnDeletion=True)
+    handler.addKey(key, secret, 1)
+    api = simwrapper.BTCESimulationApi(handler)
+    algorithm = BasicAlgo(api)
+    return Bot(algorithm, "ppc_usd")
 
-
-
+def get_bot_name(id):
+    db = get_db()
+    a = db.execute('''select bot_name from bot where bot_id = ?, [id]''', [id])
+    return a
 
 @app.teardown_appcontext
 def close_database(exception):
@@ -118,7 +130,6 @@ def dashboard():
         where owner_id = ?''',
         [session['user_id']])
 
-    print bots
     return render_template('timeline.html', message=message, bots=bots)
 
 
@@ -193,13 +204,17 @@ def bot():
     if request.method == 'POST' and session['user_id']:
         db = get_db()
         form = request.form
-        print form
-        db.execute(''' insert into bot 
+        d = db.execute(''' insert into bot 
             (bot_name, owner_id, trade_amount, floor, ceiling, abs_floor, abs_ceiling, algorithm, status)
             values (?, ?, ?, ?, ?, ?, ?, ?, ?)''',
             (form['bot_name'], session['user_id'], form['trade_amount'], form['floor'], form['ceiling'], form['abs_floor'], form['abs_ceiling'], form['algorithm'], "inactive"))
         db.commit()
+        bot = new_bot(form['algorithm'])
+
+        BOT_DICT[str(session['user_id'])+str(form['bot_name'])] = bot
+        print BOT_DICT
         flash('Your bot ' + form['bot_name']+' was added!')
+
         return redirect(url_for('dashboard'))
     if request.method == 'GET':
         return redirect(url_for('dashboard'))
@@ -207,9 +222,32 @@ def bot():
 @app.route('/bot/start/<bot_id>')
 def start_bot(bot_id):
     if request.method == 'GET':
+        db = get_db()
+        db.execute('''
+            update bot 
+            set status = ?
+            where bot_id = ? ''',
+            ('active', bot_id))
+        db.commit()
+        print get_bot_name(bot_id)
         flash('You started your bot!')
-
         redirect(url_for('dashboard'))
+
+
+@app.route('/bot/stop/<bot_id>')
+def stop_bot(bot_id):
+    if request.method == 'GET':
+        db = get_db()
+        db.execute('''
+            update bot 
+            set status = ?
+            where bot_id = ? ''',
+            ('inactive', bot_id))
+        db.commit()
+        flash('You stopped your bot!')
+        redirect(url_for('dashboard'))
+
+
 
 @app.route('/add_key', methods=['POST', 'GET'])
 def add_key():

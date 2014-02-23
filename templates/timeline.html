@@ -8,7 +8,7 @@
   <div> These are your API keys </div>
   <div>{{ message.key }}</div>
   <div>{{ message.secret }}</div>
-  
+
   {% else %}
   <div class=login>
   <div id="key_form">
@@ -71,7 +71,7 @@
 <!-- Tab panes -->
 <div class="tab-content">
   {% for bot in bots%}
-  <div class="tab-pane" id="{{ bot.bot_id }}"> Some content </div>
+  <div class="tab-pane" id="{{ bot.bot_id }}"> {{ bot.status}} </div>
   {% endfor %}
 </div>
 
