@@ -31,5 +31,6 @@ create table bot (
   ceiling integer not null,
   abs_floor integer not null,
   abs_ceiling integer not null,
-  algorithm text not null
+  algorithm text not null,
+  status text not null
   );
