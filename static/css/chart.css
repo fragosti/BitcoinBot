@@ -2,6 +2,11 @@
   font: 10px sans-serif;
 }
 
+form input{
+  margin: 3px;
+  padding-bottom: 5px;
+}
+
 .axis path,
 .axis line {
   fill: none;

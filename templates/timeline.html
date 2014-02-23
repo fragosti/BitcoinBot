@@ -1,15 +1,13 @@
 {% extends "layout.html" %}
-{% block title %}
-    {{ g.user.username }}'s Dashboard
-{% endblock %}
 {% block body %}
-  <h2 class=login >{{ self.title() }} </h2>
+  <script src="{{ url_for('static', filename='js/transactions.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/chartd.js') }}"></script>
+  
   {% if message.key %}
-  <div> These are your API keys </div>
-  <div>{{ message.key }}</div>
-  <div>{{ message.secret }}</div>
+
 
   {% else %}
+  <h2 class=login >{{ self.title() }} </h2>
   <div class="limit center" login  >
   <div id="key_form">
   <h4> Add your BTC-E API key before you can trade</h4>
@@ -192,8 +190,13 @@
      
 
         <a data-toggle="collapse" data-parent="#accordion" href="#{{ bot.bot_id }}">
-          {{ bot.bot_name }}{%if bot.status == "active" %} 
-       <span id = "shuv" class="label label-success ">Active</span>
+          {{ bot.bot_name }}
+
+        {%if bot.status == "active" %} 
+       <span class="label label-success ">Active</span>
+       {% else %}
+
+        <div> POOOP </div>
        {% endif%}
         </a>
       </h4> 
@@ -213,7 +216,9 @@
   <label class="btn btn-danger">
     <input type="radio" name="options" id="option3">  Delete
   </label>
+
   {%else%}
+
   <label class="btn btn-success">
     <input type="radio" name="options" id="option1"> Start
   </label>
@@ -223,6 +228,7 @@
   <label class="btn btn-danger">
     <input type="radio" name="options" id="option3"> Delete
   </label>
+  
 {% endif%}
 
   </div>
@@ -231,11 +237,8 @@
   </div>
 {% endfor %}
 
+
   </div>
-
-
-  
-              
                 
               </div>
             </div>
@@ -277,7 +280,9 @@
 
     </div><!-- /#wrapper -->
  </div>
-
+ <div> These are your API keys </div>
+  <div>{{ message.key }}</div>
+  <div>{{ message.secret }}</div>
 
 
 
