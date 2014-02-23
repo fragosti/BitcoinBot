@@ -22,9 +22,17 @@ left: 40%;}
 font-size: 15px;
   font-family: Helvetica;}
 .login{color: black; font-family: Helvetica; position:relative; left:40%;}
+.limit{
+  width: 300px;
+  position: relative;
+  left: 40%;
+
+
+
+}
 </style>
 </head>
-<title>{% block title %}Welcome{% endblock %} | Bitcoinbott</title>
+<title>{% block title %}Welcome{% endblock %} | Bitcoinbot</title>
 <!--<link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/style.css') }}"> -->
 <script src="http://code.jquery.com/jquery-1.11.0.min.js"> </script>
 
@@ -70,7 +78,7 @@ font-size: 15px;
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav">
        
-        <li><a href="{{ url_for('landing_page') }}">Landing Page</a></li>
+        <li><a class"navbar-brand" href="{{ url_for('landing_page') }}"><b>Landing Page</b></a></li>
         </ul>
         <ul class="nav navbar-nav navbar-right">
         {% if g.user %}

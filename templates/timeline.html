@@ -3,39 +3,41 @@
     {{ g.user.username }}'s Dashboard
 {% endblock %}
 {% block body %}
-<script src="{{ url_for('static', filename='js/transactions.js') }}"></script>
-<script src="{{ url_for('static', filename='js/chartd.js') }}"></script>
-  <h2 class=login>{{ self.title() }} </h2>
+  <h2 class=login >{{ self.title() }} </h2>
   {% if message.key %}
   <div> These are your API keys </div>
   <div>{{ message.key }}</div>
   <div>{{ message.secret }}</div>
 
   {% else %}
-  <div class=login>
+  <div class="limit center" login  >
   <div id="key_form">
   <h4> Add your BTC-E API key before you can trade</h4>
-    <form action="{{ url_for('add_key') }}" method=post>
+    <form action="{{ url_for('add_key') }}" method=post role="form">
+    <div class="form-group">
     <dl>
-      <dt>Key
-      <dd><input type=text name=key size=50 value="{{ request.form.key }}" >
-      <dt>Secret
-      <dd><input type=text name=secret size=50 value="{{ request.form.secret }}">
+      
+      <dd><input type=text class="form-control" id="exampleInputEmail1" placeholder="Key"name=key size=50 value="{{ request.form.key }}" >
+      
+      <dd><input type=text class="form-control" id="exampleInputEmail1" placeholder="Secret"name=secret size=50 value="{{ request.form.secret }}">
     </dl>
     <div class=actions><input type=submit value="Save"></div>
+    </div>
   </form>
   </div>
 
   </div>
+</div>
 
-  {% endif %}
+{% endif %}
+  
   
 
    <div id="page-wrapper">
 
         <div class="row">
           <div class="col-lg-12">
-            <h1>Dashboard <small>Statistics Overview</small></h1>
+            <h1 >Dashboard <small>Statistics Overview</small></h1>
             <ol class="breadcrumb">
               <li class="active"><i class="fa fa-dashboard"></i> Dashboard</li>
             </ol>
@@ -58,7 +60,7 @@
                 </div>
               </div>
               
-
+&nbsp
             </div>
           </div>
           <div class="col-lg-3">
@@ -74,7 +76,9 @@
                   </div>
                 </div>
               </div>
+              &nbsp
             </div>
+            
           </div>
 
 
@@ -91,8 +95,9 @@
                   </div>
                 </div>
               </div>
-             
+             &nbsp
             </div>
+
           </div>
           
         </div><!-- /.row -->
@@ -101,7 +106,7 @@
           <div class="col-lg-12">
             <div class="panel panel-primary">
               <div class="panel-heading">
-                <h3 class="panel-title"><i class="fa fa-bar-chart-o"></i> Traffic Statistics: October 1, 2013 - October 31, 2013</h3>
+                <h3 class="panel-title"><i class="fa fa-bar-chart-o"></i> Live: Market Data</h3>
               </div>
               <div class="panel-body">
                   <div id="chart"> </div>
@@ -158,7 +163,11 @@
         <option value="basic">Moving Average</option>
       </select></dd>
     <br>
+    {% if message.key %}
   <button type="submit" class="btn btn-success">Add Bot</button>
+  {%else%}
+   <button type="submit" class="btn btn-success hidden">Add Bot</button>
+   {% endif %}
   </form>
   
 
@@ -178,26 +187,31 @@
   {% for bot in bots %}
 
   <div class="panel panel-default">
-    <div class="panel-heading">
+    <div class="panel-heading ">
       <h4 class="panel-title">
+     
+
         <a data-toggle="collapse" data-parent="#accordion" href="#{{ bot.bot_id }}">
-          {{ bot.bot_name }}
+          {{ bot.bot_name }}{%if bot.status == "active" %} 
+       <span id = "shuv" class="label label-success ">Active</span>
+       {% endif%}
         </a>
-      </h4>
+      </h4> 
     </div>
+    
     <div id="{{ bot.bot_id }}" class="panel-collapse collapse in">
-      <div class="panel-body">
+           <div class="panel-body ">
        <div class="btn-group" data-toggle="buttons">
        {%if bot.status == "active" %} 
 
   <label class="btn btn-success active">
-    <input type="radio" name="options" id="option1"> Start
+    <input type="radio" name="options" id="option1"><a id="nohigh" href="bot/start/{{bot.bot_id}}"> Start </a>
   </label>
   <label class="btn btn-warning">
-    <input type="radio" name="options" id="option2"> Stop
+    <input type="radio" name="options" id="option2"><a id="nohigh" href="bot/stop/{{bot.bot_id}}"> Stop </a>
   </label>
   <label class="btn btn-danger">
-    <input type="radio" name="options" id="option3"> Delete
+    <input type="radio" name="options" id="option3">  Delete
   </label>
   {%else%}
   <label class="btn btn-success">
@@ -262,26 +276,14 @@
       </div><!-- /#page-wrapper -->
 
     </div><!-- /#wrapper -->
- 
+ </div>
 
 
 
 
 
 
-<ul class="nav nav-tabs">
-  {% for bot in bots %}
-    <li><a href="#{{ bot.bot_id }}" data-toggle="tab">{{ bot.bot_name}}</a></li>
-  {% endfor %}
-  
-</ul>
 
-<!-- Tab panes -->
-<div class="tab-content">
-  {% for bot in bots%}
-  <div class="tab-pane" id="{{ bot.bot_id }}"> {{ bot.status}} </div>
-  {% endfor %}
-</div>
 
 
 

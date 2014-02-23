@@ -3,3 +3,30 @@
 	overflow: scroll;
 }
 
+
+#tran_wrapper {
+	max-height: 200px;
+
+}
+#shuv{
+	position: relative;
+	left: 80%;
+}
+#nohigh {
+    text-decoration: none !important;
+    color: inherit;
+}
+#nohigh:hover 
+{
+     color:inherit; 
+     text-decoration:none; 
+     cursor:pointer;  
+}
+
+#loginapi h2, #loginapi h4{
+	font-family: Times !important;
+
+
+}
+
+
