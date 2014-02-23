@@ -35,7 +35,13 @@ app.config.update(dict(
 
 def init_bots():
     for bot in get_bots():
-        print bot
+        bot_instance = new_bot(bot['algorithm'])
+        
+        if bot['status'] == 'active':
+            bot_instance.start()
+        else:
+            bot_instance.stop()
+        BOT_DICT[str(session['user_id'])+str(bot['bot_name'])] = bot_instance
 
 def get_db():
     """Opens a new database connection if there is none yet for the
@@ -345,6 +351,7 @@ app.jinja_env.filters['gravatar'] = gravatar_url
 
 
 if __name__ == '__main__':
+    #init_bots()
     #init_db() 
     #collect_data()
     app.run()
