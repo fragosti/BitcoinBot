@@ -3,6 +3,8 @@
     {{ g.user.username }}'s Dashboard
 {% endblock %}
 {% block body %}
+<script src="{{ url_for('static', filename='js/transactions.js') }}"></script>
+<script src="{{ url_for('static', filename='js/chartd.js') }}"></script>
   <h2 class=login>{{ self.title() }} </h2>
   {% if message.key %}
   <div> These are your API keys </div>

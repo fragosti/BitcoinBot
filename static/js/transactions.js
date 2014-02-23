@@ -7,10 +7,10 @@ $('document').ready(function(){
 			response = JSON.parse(response)
 		
 			for(var i = 0; i < response.length ; i++){
-				obj = response[i];
+				var obj = response[i];
 				html += 
 				"<tr>"+
-         			"<td>" + obj.time+ "</td>" +
+         			"<td>" + obj.time + "</td>" +
             		"<td>" + obj.pair + "</td>" + 
             		"<td>" + obj.amount + "</td>" +
             		"<td>" + obj.rate + "</td>" +
