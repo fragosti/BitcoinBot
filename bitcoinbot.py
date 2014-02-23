@@ -7,6 +7,10 @@ from datetime import datetime
 from flask import Flask, request, session, url_for, redirect, \
      render_template, abort, g, flash, _app_ctx_stack
 from werkzeug import check_password_hash, generate_password_hash
+from bot import bot
+from bot import defaults
+from bot.algorithms import *
+
 
 
 # configuration
@@ -35,6 +39,11 @@ def get_db():
         top.sqlite_db = sqlite3.connect(app.config['DATABASE'])
         top.sqlite_db.row_factory = sqlite3.Row
     return top.sqlite_db
+
+def new_bot(key, secret, algorithm):
+    pass
+
+
 
 
 @app.teardown_appcontext
@@ -286,4 +295,5 @@ app.jinja_env.filters['gravatar'] = gravatar_url
 
 if __name__ == '__main__':
     #init_db() 
+    #collect_data()
     app.run()
