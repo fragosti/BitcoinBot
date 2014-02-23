@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import time
+import json
 from sqlite3 import dbapi2 as sqlite3
 from hashlib import md5
 from datetime import datetime
@@ -22,6 +23,7 @@ DEBUG = True
 SECRET_KEY = 'development key'
 
 BOT_DICT = {}
+HANDLER = btceapi.KeyHandler(resaveOnDeletion=True)
 
 # create our little application :)
 app = Flask(__name__)
@@ -54,13 +56,24 @@ def get_db():
     return top.sqlite_db
 
 def new_bot(algorithm):
-    key = "AZGRIZYJ-H8VRF495-34H6CAF4-9UWI56WI-74U0063R" 
-    secret = "71eb80d6e1b60f4df6ae413cf36b44d1cdd30238fe82ef5a09416cfbb44e059e"
-    handler = btceapi.KeyHandler(resaveOnDeletion=True)
-    handler.addKey(key, secret, 1)
-    api = simwrapper.BTCESimulationApi(handler)
-    algorithm = BasicAlgo(api)
-    return Bot(algorithm, "ppc_usd")
+    api = simwrapper.BTCESimulationApi(HANDLER)
+    algorithm_obj = None
+    if algorithm == 'basic':
+        algorithm_obj = BasicAlgo(api)
+    if algorithm == 'random':
+        algorithm_obj = BasicAlgo(api)
+    return Bot(algorithm_obj, "ppc_usd")
+
+def get_api_key(id):
+    key = query_db('''
+        select api_key.* from api_key
+        where api_key.who_id = ? ''',
+        [session['user_id']])
+    if len(key) > 0:
+        return key[0]
+    else:
+        flash("You must submit your API keys")
+        return False
 
 def get_bots():
     bots = query_db('''
@@ -99,6 +112,30 @@ def query_db(query, args=(), one=False):
     cur = get_db().execute(query, args)
     rv = cur.fetchall()
     return (rv[0] if rv else None) if one else rv
+
+@app.route('/api/transaction_history')
+def get_transaction_history():
+    if request.method == 'GET':
+        update_key()
+        api = simwrapper.BTCESimulationApi(HANDLER)
+        trades = api.getTradeHistory()
+        json_list = []
+        for trade_obj in trades:
+            obj = {}
+            obj['pair'] = trade_obj.pair
+            obj['type'] = trade_obj.type
+            obj['amount'] = float(trade_obj.amount)
+            obj['rate'] = float(trade_obj.rate)
+            obj['time'] = str(trade_obj.timestamp)
+            json_list.append(obj)
+        print json_list
+        return json.dumps(json_list)
+
+
+    
+    return "hello"
+
+
 
 
 def get_user_id(username):
@@ -228,7 +265,6 @@ def bot():
         bot = new_bot(form['algorithm'])
 
         BOT_DICT[str(session['user_id'])+str(form['bot_name'])] = bot
-        print BOT_DICT
         flash('Your bot ' + form['bot_name']+' was added!')
 
         return redirect(url_for('dashboard'))
@@ -261,10 +297,22 @@ def stop_bot(bot_id):
             where bot_id = ? ''',
             ('inactive', bot_id))
         db.commit()
+        name = get_bot_name(bot_id)
+        BOT_DICT[str(session['user_id'])+name].stop()
         flash('You stopped your bot!')
         redirect(url_for('dashboard'))
 
-
+@app.route('/bot/delete/<bot_id>')
+def delete_bot(bot_id):
+    if request.method == 'GET':
+        flash("You deleted bot " + get_bot_name(bot_id))
+        db = get_db()
+        db.execute('''
+            delete from bot
+            where bot_id = ?
+            ''', [bot_id])
+        db.commit()
+        return redirect(url_for('dashboard'))
 
 @app.route('/add_key', methods=['POST', 'GET'])
 def add_key():
@@ -278,11 +326,13 @@ def add_key():
                                 request.form['key'],  
                                 request.form['secret']))
         db.commit()
+        update_key()
         flash('Your keys were added')
         return redirect(url_for('dashboard'))
 
-
-
+def update_key():
+    api_key = get_api_key(session['user_id'])
+    HANDLER.addKey(str(api_key['key']), str(api_key['secret']), 1)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -302,6 +352,7 @@ def login():
         else:
             flash('You were logged in')
             session['user_id'] = user['user_id']
+            update_key()
             init_bots()
             return redirect(url_for('dashboard'))
     return render_template('login.html', error=error)
