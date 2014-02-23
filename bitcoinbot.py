@@ -186,14 +186,21 @@ def bot():
         form = request.form
         print form
         db.execute(''' insert into bot 
-            (bot_name, owner_id, trade_amount, floor, ceiling, abs_floor, abs_ceiling, algorithm)
-            values (?, ?, ?, ?, ?, ?, ?, ?)''',
-            (form['bot_name'], session['user_id'], form['trade_amount'], form['floor'], form['ceiling'], form['abs_floor'], form['abs_ceiling'], form['algorithm']))
+            (bot_name, owner_id, trade_amount, floor, ceiling, abs_floor, abs_ceiling, algorithm, status)
+            values (?, ?, ?, ?, ?, ?, ?, ?, ?)''',
+            (form['bot_name'], session['user_id'], form['trade_amount'], form['floor'], form['ceiling'], form['abs_floor'], form['abs_ceiling'], form['algorithm'], "inactive"))
         db.commit()
         flash('Your bot ' + form['bot_name']+' was added!')
         return redirect(url_for('dashboard'))
     if request.method == 'GET':
-        pass
+        return redirect(url_for('dashboard'))
+
+@app.route('/bot/start/<bot_id>')
+def start_bot(bot_id):
+    if request.method == 'GET':
+        flash('You started your bot!')
+
+        redirect(url_for('dashboard'))
 
 @app.route('/add_key', methods=['POST', 'GET'])
 def add_key():
