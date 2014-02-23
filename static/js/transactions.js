@@ -17,7 +17,7 @@ $('document').ready(function(){
             	"<td>" + obj.rate + "</td>" +
         	"</tr>"
 		}
-		$('#transactions').html(html);
+		$('#transactions_fill').html(html);
 	});
 
 

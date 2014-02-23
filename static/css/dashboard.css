@@ -1,8 +1,5 @@
 #transactions {
-	max-height: 200px;
-	overflow: auto;
+	max-height: 300px;
+	overflow: scroll;
 }
 
-#tran_wrapper {
-	max-height: 200px;
-}
