@@ -33,6 +33,9 @@ app.config.update(dict(
 
     ))
 
+def init_bots():
+    for bot in get_bots():
+        print bot
 
 def get_db():
     """Opens a new database connection if there is none yet for the
@@ -53,10 +56,20 @@ def new_bot(algorithm):
     algorithm = BasicAlgo(api)
     return Bot(algorithm, "ppc_usd")
 
+def get_bots():
+    bots = query_db('''
+        select bot.* from bot 
+        where owner_id = ?''',
+        [session['user_id']])
+    return bots
+
 def get_bot_name(id):
     db = get_db()
-    a = db.execute('''select bot_name from bot where bot_id = ?, [id]''', [id])
-    return a
+    name = "DB_ERROR"
+    names = query_db('''select bot_name from bot where bot_id = ?''', [id])
+    if len(names) > 0:
+        name = names[0][0]
+    return str(name)
 
 @app.teardown_appcontext
 def close_database(exception):
@@ -125,10 +138,7 @@ def dashboard():
     if len(message) > 0:
         message = message[0]
 
-    bots = query_db('''
-        select bot.* from bot 
-        where owner_id = ?''',
-        [session['user_id']])
+    bots = get_bots()
 
     return render_template('timeline.html', message=message, bots=bots)
 
@@ -229,9 +239,10 @@ def start_bot(bot_id):
             where bot_id = ? ''',
             ('active', bot_id))
         db.commit()
-        print get_bot_name(bot_id)
-        flash('You started your bot!')
-        redirect(url_for('dashboard'))
+        name = get_bot_name(bot_id)
+        BOT_DICT[str(session['user_id'])+name].start()
+        flash('You started your bot ' + name)
+        return redirect(url_for('dashboard'))
 
 
 @app.route('/bot/stop/<bot_id>')
@@ -272,6 +283,7 @@ def login():
     """Logs the user in."""
     if g.user:
         return redirect(url_for('dashboard'))
+
     error = None
     if request.method == 'POST':
         user = query_db('''select * from user where
@@ -284,6 +296,7 @@ def login():
         else:
             flash('You were logged in')
             session['user_id'] = user['user_id']
+            init_bots()
             return redirect(url_for('dashboard'))
     return render_template('login.html', error=error)
 
