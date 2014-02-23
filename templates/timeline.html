@@ -8,6 +8,7 @@
   <div> These are your API keys </div>
   <div>{{ message.key }}</div>
   <div>{{ message.secret }}</div>
+
   {% else %}
   <div class=login>
   <div id="key_form">
@@ -26,6 +27,34 @@
   </div>
 
   {% endif %}
+  <form action="{{ url_for('bot')}}" method=post>
+    <dl>
+      <dt>Botname</dt>
+      <dd><input type=text name="bot_name" value="{{ request.form.bot_name }}"></dd>
+
+      <dt>Max Amount/Trade ($)</dt>
+      <dd><input name="trade_amount" type=number></dd>
+
+      <dt>Max Profit (%)</dt>
+      <dd><input name="ceiling" type=number></dd>
+
+      <dt>Max Loss (%)</dt>
+      <dd><input name="floor" type=number></dd>
+
+      <dt>Floor ($)</dt>
+      <dd><input name="abs_floor" type=number></dd>
+
+      <dt>Ceiling ($)</dt>
+      <dd><input name="abs_ceiling" type=number></dd>
+
+      <dt>Algorithm</dt>
+      <select>
+        <option value="random">Random</option>
+        <option value="basic">Moving Average</option>
+      </select>
+    </dl>
+  <button type="submit" class="btn btn-success">Add Bot</button>
+  </form>
 
   <script>
 

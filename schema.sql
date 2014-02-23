@@ -24,6 +24,7 @@ create table message (
 drop table if exists bot;
 create table bot (
   bot_id integer primary key autoincrement,
+  bot_name text not null,
   owner_id integer not null,
   trade_amount integer not null,
   floor integer not null,
