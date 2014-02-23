@@ -29,7 +29,7 @@
 
 {% endif %}
   
-  
+  <a href="/bot/start/1"> HERE </a>
 
    <div id="page-wrapper">
 
@@ -189,14 +189,14 @@
       <h4 class="panel-title">
      
 
-        <a data-toggle="collapse" data-parent="#accordion" href="#{{ bot.bot_id }}">
+        <a data-toggle="collapse" data-parent="#accordion" >
           {{ bot.bot_name }}
 
         {%if bot.status == "active" %} 
        <span class="label label-success ">Active</span>
        {% else %}
 
-        <div> POOOP </div>
+        <span class="label label-danger ">Inactive</span>
        {% endif%}
         </a>
       </h4> 
@@ -204,31 +204,23 @@
     
     <div id="{{ bot.bot_id }}" class="panel-collapse collapse in">
            <div class="panel-body ">
-       <div class="btn-group" data-toggle="buttons">
-       {%if bot.status == "active" %} 
+       <div class="btn-group" >
+       {% if bot.status == "active" %} 
 
-  <label class="btn btn-success active">
-    <input type="radio" name="options" id="option1"><a id="nohigh" href="bot/start/{{bot.bot_id}}"> Start </a>
-  </label>
-  <label class="btn btn-warning">
-    <input type="radio" name="options" id="option2"><a id="nohigh" href="bot/stop/{{bot.bot_id}}"> Stop </a>
-  </label>
-  <label class="btn btn-danger">
-    <input type="radio" name="options" id="option3">  Delete
-  </label>
+    <a class="btn btn-success" href="{{ url_for('start_bot', bot_id = bot.bot_id )}}"> Start</a> 
+
+    <a class="btn btn-warning" href="/bot/stop/{{bot.bot_id}}"> Stop </a>
+
+    <a class="btn btn-danger" href="/bot/delete/{{bot.bot_id }}"> Delete </a>
+
 
   {%else%}
+    <a class="btn btn-success" href="{{ url_for('start_bot', bot_id= bot.bot_id )}}"> Start </a>
+    
+    <a class="btn btn-warning" href="/bot/stop/{{ bot.bot_id }}">Stop</a>
 
-  <label class="btn btn-success">
-    <input type="radio" name="options" id="option1"> Start
-  </label>
-  <label class="btn btn-warning active">
-    <input type="radio" name="options" id="option2"> Stop
-  </label>
-  <label class="btn btn-danger">
-    <input type="radio" name="options" id="option3"> Delete
-  </label>
-  
+    <a class="btn btn-danger" href="/bot/delete/{{ bot.bot_id }}"> Delete </a>
+
 {% endif%}
 
   </div>

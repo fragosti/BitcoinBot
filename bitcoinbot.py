@@ -168,7 +168,7 @@ def get_tickers():
         f = open('tickers.csv', 'rU')
         reader = csv.DictReader(f, fieldnames=('high','low','avg','last','time'))
         out = json.dumps([row for row in reader][60:])
-        print out
+        #print out
         print "read from file"
         return out
 
@@ -275,7 +275,7 @@ def stop_bot(bot_id):
         name = get_bot_name(bot_id)
         BOT_DICT[str(session['user_id'])+name].stop()
         flash('You stopped your bot!')
-        redirect(url_for('dashboard'))
+        return redirect(url_for('dashboard'))
 
 @app.route('/bot/delete/<bot_id>')
 def delete_bot(bot_id):
