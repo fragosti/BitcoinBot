@@ -11,17 +11,19 @@
   <div>{{ message.secret }}</div>
 
   {% else %}
-  <div class=login >
+  <div class="limit center" login  >
   <div id="key_form">
   <h4> Add your BTC-E API key before you can trade</h4>
-    <form action="{{ url_for('add_key') }}" method=post>
+    <form action="{{ url_for('add_key') }}" method=post role="form">
+    <div class="form-group">
     <dl>
-      <dt>Key
-      <dd><input type=text name=key size=50 value="{{ request.form.key }}" >
-      <dt>Secret
-      <dd><input type=text name=secret size=50 value="{{ request.form.secret }}">
+      
+      <dd><input type=text class="form-control" id="exampleInputEmail1" placeholder="Key"name=key size=50 value="{{ request.form.key }}" >
+      
+      <dd><input type=text class="form-control" id="exampleInputEmail1" placeholder="Secret"name=secret size=50 value="{{ request.form.secret }}">
     </dl>
     <div class=actions><input type=submit value="Save"></div>
+    </div>
   </form>
   </div>
 
@@ -36,7 +38,7 @@
 
         <div class="row">
           <div class="col-lg-12">
-            <h1>Dashboard <small>Statistics Overview</small></h1>
+            <h1 >Dashboard <small>Statistics Overview</small></h1>
             <ol class="breadcrumb">
               <li class="active"><i class="fa fa-dashboard"></i> Dashboard</li>
             </ol>
@@ -59,7 +61,7 @@
                 </div>
               </div>
               
-
+&nbsp
             </div>
           </div>
           <div class="col-lg-3">
@@ -75,7 +77,9 @@
                   </div>
                 </div>
               </div>
+              &nbsp
             </div>
+            
           </div>
 
 
@@ -92,8 +96,9 @@
                   </div>
                 </div>
               </div>
-             
+             &nbsp
             </div>
+
           </div>
           
         </div><!-- /.row -->
@@ -159,7 +164,11 @@
         <option value="basic">Moving Average</option>
       </select></dd>
     <br>
+    {% if message.key %}
   <button type="submit" class="btn btn-success">Add Bot</button>
+  {%else%}
+   <button type="submit" class="btn btn-success hidden">Add Bot</button>
+   {% endif %}
   </form>
   
 
@@ -242,66 +251,23 @@
                   <table class="table table-bordered table-hover table-striped tablesorter">
                     <thead>
                       <tr>
-                        
-                        <th>Order Date <i class="fa fa-sort"></i></th>
                         <th>Order Time <i class="fa fa-sort"></i></th>
-                        <th>Amount (USD) <i class="fa fa-sort"></i></th>
+                        <th> Pair <i class="fa fa-sort"></i></th>
+                        <th> Amount <i class="fa fa-sort"></i></th>
+                        <th> Price <i class"fa fa-sort"> </i></th>
                       </tr>
                     </thead>
-                    <tbody>
+                    <div id="trans_wrapper">
+                    <tbody id="transactions">
                       <tr>
                         
                         <td>10/21/2013</td>
                         <td>3:29 PM</td>
                         <td>$321.33</td>
                       </tr>
-                      <tr>
-                       
-                        <td>10/21/2013</td>
-                        <td>3:20 PM</td>
-                        <td>$234.34</td>
-                      </tr>
-                      <tr>
-                        
-                        <td>10/21/2013</td>
-                        <td>3:03 PM</td>
-                        <td>$724.17</td>
-                      </tr>
-                      <tr>
-                       
-                        <td>10/21/2013</td>
-                        <td>3:00 PM</td>
-                        <td>$23.71</td>
-                      </tr>
-                      <tr>
-                        
-                        <td>10/21/2013</td>
-                        <td>2:49 PM</td>
-                        <td>$8345.23</td>
-                      </tr>
-                      <tr>
-                        
-                        <td>10/21/2013</td>
-                        <td>2:23 PM</td>
-                        <td>$245.12</td>
-                      </tr>
-                      <tr>
-                        
-                        <td>10/21/2013</td>
-                        <td>2:15 PM</td>
-                        <td>$5663.54</td>
-                      </tr>
-                      <tr>
-                        
-                        <td>10/21/2013</td>
-                        <td>2:13 PM</td>
-                        <td>$943.45</td>
-                      </tr>
                     </tbody>
+                    </div>
                   </table>
-                </div>
-                <div class="text-right">
-                  <a href="#">View All Transactions <i class="fa fa-arrow-circle-right"></i></a>
                 </div>
               </div>
             </div>

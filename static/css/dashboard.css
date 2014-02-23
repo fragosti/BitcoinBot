@@ -5,6 +5,7 @@
 
 #tran_wrapper {
 	max-height: 200px;
+
 }
 #shuv{
 	position: relative;
@@ -23,5 +24,8 @@
 #loginapi h2, #loginapi h4{
 	font-family: Times !important;
 
-	
+
+}
+.hor{
+	padding: 50px;
 }

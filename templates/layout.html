@@ -23,7 +23,11 @@ font-size: 15px;
   font-family: Helvetica;}
 .login{color: black; font-family: Helvetica; position:relative; left:40%;}
 .limit{
-  width: 300px
+  width: 300px;
+  position: relative;
+  left: 40%;
+
+
 
 }
 </style>
@@ -77,7 +81,7 @@ font-size: 15px;
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav">
        
-        <li><a href="{{ url_for('landing_page') }}">Landing Page</a></li>
+        <li><a class"navbar-brand" href="{{ url_for('landing_page') }}"><b>Landing Page</b></a></li>
         </ul>
         <ul class="nav navbar-nav navbar-right">
         {% if g.user %}
