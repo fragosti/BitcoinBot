@@ -54,6 +54,8 @@ def get_db():
     return top.sqlite_db
 
 def new_bot(algorithm):
+    api_key = get_api_key(session['user_id'])
+    print api_key
     key = "AZGRIZYJ-H8VRF495-34H6CAF4-9UWI56WI-74U0063R" 
     secret = "71eb80d6e1b60f4df6ae413cf36b44d1cdd30238fe82ef5a09416cfbb44e059e"
     handler = btceapi.KeyHandler(resaveOnDeletion=True)
@@ -61,6 +63,17 @@ def new_bot(algorithm):
     api = simwrapper.BTCESimulationApi(handler)
     algorithm = BasicAlgo(api)
     return Bot(algorithm, "ppc_usd")
+
+def get_api_key(id):
+    key = query_db('''
+        select api_key.* from api_key
+        where api_key.who_id = ? ''',
+        [session['user_id']])
+    if len(key) > 0:
+        return key[0]
+    else:
+        flash("You must submit your API keys")
+        return False
 
 def get_bots():
     bots = query_db('''
@@ -228,7 +241,6 @@ def bot():
         bot = new_bot(form['algorithm'])
 
         BOT_DICT[str(session['user_id'])+str(form['bot_name'])] = bot
-        print BOT_DICT
         flash('Your bot ' + form['bot_name']+' was added!')
 
         return redirect(url_for('dashboard'))
@@ -261,6 +273,8 @@ def stop_bot(bot_id):
             where bot_id = ? ''',
             ('inactive', bot_id))
         db.commit()
+        name = get_bot_name(bot_id)
+        BOT_DICT[str(session['user_id'])+name].start()
         flash('You stopped your bot!')
         redirect(url_for('dashboard'))
 
@@ -280,8 +294,6 @@ def add_key():
         db.commit()
         flash('Your keys were added')
         return redirect(url_for('dashboard'))
-
-
 
 
 @app.route('/login', methods=['GET', 'POST'])
