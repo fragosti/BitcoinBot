@@ -1,7 +1,8 @@
 #transactions {
-	max-height: 200px;
-	overflow: auto;
+	max-height: 300px;
+	overflow: scroll;
 }
+
 
 #tran_wrapper {
 	max-height: 200px;
@@ -21,11 +22,11 @@
      text-decoration:none; 
      cursor:pointer;  
 }
+
 #loginapi h2, #loginapi h4{
 	font-family: Times !important;
 
 
 }
-.hor{
-	padding: 50px;
-}
+
+

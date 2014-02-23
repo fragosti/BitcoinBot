@@ -1,70 +1,60 @@
-var jsonData = [
-{
-  "low": 1.2,
-  "high":4,
-  "last": 3.50,
-  "avg" : 3.5,
-  "date" : 22
- 
-},
-{
-  "low": 1.2,
-  "high":4,
-  "last": 3.80,
-  "avg" : 3.5,
-  "date" : 23
- 
-},
-{
-  "low": 1.2,
-  "high":4,
-  "last": 4.0,
-  "avg" : 3.5,
-  "date" : 24
- 
-},
-{
-  "low": 1.2,
-  "high":4,
-  "last": 4.9,
-  "avg" : 3.5,
-  "date" : 25
- 
-}
 
-];
+
+
 
 $('document').ready(function(){
+
+  function load(){
+      $('#chart').html('');
+      var jsonData;
+    $.get('/api/tickers', function(response){
+      jsonData = JSON.parse(response);
+      loadChart(jsonData);
+    });
+  }
+
+  
+  load();
+
+  setInterval(load,30000);
+
+function loadChart(jsonData){
+  var parseDate = d3.time.format("%Y-%m-%j %X").parse;
+  console.log(parseDate("2014-02-23 09:57:13"));
+
+  jsonData.forEach(function(d){
+    d.date = parseDate(d.time);
+    d.last = d.last;
+  });
+  
+
   var margin = {top: 20, right: 20, bottom: 30, left: 50},
     width = 960 - margin.left - margin.right,
     height = 500 - margin.top - margin.bottom;
 
-var parseDate = d3.time.format("%Y-%m-%dT%H:%M:%S").parse;
-parseDate("1-1-1993")
-console.log(parseDate("2011-01-01T12:14:35"))
 
-var x = d3.time.scale()
+  var x = d3.time.scale()
     .range([0, width]);
 
-var y = d3.scale.linear()
-.domain([0, d3.max(jsonData, function(d) { return d["last"]; })])
+  var y = d3.scale.linear()
+  .domain([0, d3.max(jsonData, function(d) { return d["last"]; })])
     .range([height, 1]);
 
-var xAxis = d3.svg.axis()
+  var xAxis = d3.svg.axis()
     .scale(x)
     .orient("bottom");
 
-var yAxis = d3.svg.axis()
+  var yAxis = d3.svg.axis()
     .scale(y)
     .orient("left");
                          
 
-var line = d3.svg.line()
+  var line = d3.svg.line()
     .x(function(d) { return x(d.date); })
     .y(function(d) { return y(d.last); });
 
 
-var svg = d3.select("#chart").append("svg")
+  var svg = d3.select("#chart").append("svg")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)
   .append("g")
@@ -94,6 +84,17 @@ var svg = d3.select("#chart").append("svg")
       .datum(jsonData)
       .attr("class", "line")
       .attr("d", line);
+
+  svg.selectAll('path.line')
+    .data([jsonData])
+    .enter()
+    .append("svg:path")
+    .attr("d", line);
+
+}
+
+
+  
 
 
 });

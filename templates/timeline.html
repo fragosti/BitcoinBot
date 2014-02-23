@@ -3,7 +3,6 @@
     {{ g.user.username }}'s Dashboard
 {% endblock %}
 {% block body %}
-
   <h2 class=login >{{ self.title() }} </h2>
   {% if message.key %}
   <div> These are your API keys </div>
@@ -91,7 +90,7 @@
                     <i class="fa fa-tasks fa-5x"></i>
                   </div>
                   <div class="col-xs-6 text-right">
-                    <p class="announcement-heading">3</p>
+                    <p class="announcement-heading"> {{ bots|length }} </p>
                     <p class="announcement-text">Current Bots</p>
                   </div>
                 </div>
@@ -247,7 +246,9 @@
                 <h3 class="panel-title"><i class="fa fa-money"></i> Recent Transactions</h3>
               </div>
               <div class="panel-body">
+              <div id="transactions">
                 <div class="table-responsive">
+                  
                   <table class="table table-bordered table-hover table-striped tablesorter">
                     <thead>
                       <tr>
@@ -257,17 +258,15 @@
                         <th> Price <i class"fa fa-sort"> </i></th>
                       </tr>
                     </thead>
-                    <div id="trans_wrapper">
-                    <tbody id="transactions">
+                    <tbody id="transactions_fill">
                       <tr>
-                        
                         <td>10/21/2013</td>
                         <td>3:29 PM</td>
                         <td>$321.33</td>
                       </tr>
                     </tbody>
-                    </div>
                   </table>
+                <div>
                 </div>
               </div>
             </div>

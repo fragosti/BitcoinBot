@@ -2,6 +2,7 @@
 
 import time
 import json
+import csv
 from sqlite3 import dbapi2 as sqlite3
 from hashlib import md5
 from datetime import datetime
@@ -13,6 +14,7 @@ from bot.wrappers import simwrapper
 from bot.bot import Bot
 from bot import defaults
 from bot.algorithms import *
+from bot.async import run_async
 import settings
 
 
@@ -21,6 +23,7 @@ DATABASE = 'bitcoinbot.db'
 PER_PAGE = 30
 DEBUG = True
 SECRET_KEY = 'development key'
+DATA_COLLECT = True
 
 BOT_DICT = {}
 HANDLER = btceapi.KeyHandler(resaveOnDeletion=True)
@@ -75,12 +78,38 @@ def get_api_key(id):
         flash("You must submit your API keys")
         return False
 
+@run_async
+def collect_data():
+    while DATA_COLLECT:
+        
+        ticker = btceapi.getTicker("ppc_usd")
+        data = {
+            'high': float(ticker.high),
+            'low' : float(ticker.low),
+            'avg' : float(ticker.avg),
+            'last': float(ticker.last),
+            'time' : str(ticker.server_time)
+        }
+        data = [float(ticker.high),float(ticker.low),float(ticker.avg),float(ticker.last),str(ticker.server_time)]
+
+        print 'collect_data is writing to file'
+        fd = open('tickers.csv', 'a')
+        #fd.write("hello bye hello bye hello")
+        writer = csv.writer(fd)
+        writer.writerow(data)
+        #writer.writerow("hello bye hello bye hello")
+        fd.close()
+        time.sleep(10)
+        #print "datacollection failed"
+        #traceback.print_exc(file=sys.stdout)
+
 def get_bots():
     bots = query_db('''
         select bot.* from bot 
         where owner_id = ?''',
         [session['user_id']])
     return bots
+
 
 def get_bot_name(id):
     db = get_db()
@@ -115,8 +144,7 @@ def query_db(query, args=(), one=False):
 
 @app.route('/api/transaction_history')
 def get_transaction_history():
-    if request.method == 'GET':
-        update_key()
+    if request.method == 'GET' and update_key():
         api = simwrapper.BTCESimulationApi(HANDLER)
         trades = api.getTradeHistory()
         json_list = []
@@ -128,14 +156,21 @@ def get_transaction_history():
             obj['rate'] = float(trade_obj.rate)
             obj['time'] = str(trade_obj.timestamp)
             json_list.append(obj)
-        print json_list
         return json.dumps(json_list)
 
 
     
     return "hello"
 
-
+@app.route('/api/tickers')
+def get_tickers():
+    if request.method == 'GET':
+        f = open('tickers.csv', 'rU')
+        reader = csv.DictReader(f, fieldnames=('high','low','avg','last','time'))
+        out = json.dumps([row for row in reader][60:])
+        print out
+        print "read from file"
+        return out
 
 
 def get_user_id(username):
@@ -191,66 +226,6 @@ def landing_page():
     return render_template('landing.html')
 
 
-@app.route('/public')
-def public_timeline():
-    """Displays the latest messages of all users."""
-    return render_template('timeline.html', messages=query_db('''
-        select message.*, user.* from message, user
-        where message.author_id = user.user_id
-        order by message.pub_date desc limit ?''', [PER_PAGE]))
-
-
-@app.route('/<username>')
-def user_timeline(username):
-    """Display's a users tweets."""
-    profile_user = query_db('select * from user where username = ?',
-                            [username], one=True)
-    if profile_user is None:
-        abort(404)
-    followed = False
-    if g.user:
-        followed = query_db('''select 1 from follower where
-            follower.who_id = ? and follower.whom_id = ?''',
-            [session['user_id'], profile_user['user_id']],
-            one=True) is not None
-    return render_template('timeline.html', messages=query_db('''
-            select message.*, user.* from message, user where
-            user.user_id = message.author_id and user.user_id = ?
-            order by message.pub_date desc limit ?''',
-            [profile_user['user_id'], PER_PAGE]), followed=followed,
-            profile_user=profile_user)
-
-
-@app.route('/<username>/follow')
-def follow_user(username):
-    """Adds the current user as follower of the given user."""
-    if not g.user:
-        abort(401)
-    whom_id = get_user_id(username)
-    if whom_id is None:
-        abort(404)
-    db = get_db()
-    db.execute('insert into follower (who_id, whom_id) values (?, ?)',
-              [session['user_id'], whom_id])
-    db.commit()
-    flash('You are now following "%s"' % username)
-    return redirect(url_for('user_timeline', username=username))
-
-
-@app.route('/<username>/unfollow')
-def unfollow_user(username):
-    """Removes the current user as follower of the given user."""
-    if not g.user:
-        abort(401)
-    whom_id = get_user_id(username)
-    if whom_id is None:
-        abort(404)
-    db = get_db()
-    db.execute('delete from follower where who_id=? and whom_id=?',
-              [session['user_id'], whom_id])
-    db.commit()
-    flash('You are no longer following "%s"' % username)
-    return redirect(url_for('user_timeline', username=username))
 
 @app.route('/bot', methods=['POST', 'GET'])
 def bot():
@@ -334,6 +309,10 @@ def update_key():
     api_key = get_api_key(session['user_id'])
     if api_key:
         HANDLER.addKey(str(api_key['key']), str(api_key['secret']), 1)
+        return True
+    else:
+        return False
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -353,8 +332,8 @@ def login():
         else:
             flash('You were logged in')
             session['user_id'] = user['user_id']
-            update_key()
-            init_bots()
+            if update_key():
+                init_bots()
             return redirect(url_for('dashboard'))
     return render_template('login.html', error=error)
 
@@ -405,5 +384,5 @@ app.jinja_env.filters['gravatar'] = gravatar_url
 if __name__ == '__main__':
     #init_bots()
     #init_db() 
-    #collect_data()
+    collect_data()
     app.run()
