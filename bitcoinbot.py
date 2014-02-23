@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import time
+import json
 from sqlite3 import dbapi2 as sqlite3
 from hashlib import md5
 from datetime import datetime
@@ -117,7 +118,20 @@ def get_transaction_history():
     if request.method == 'GET':
         update_key()
         api = simwrapper.BTCESimulationApi(HANDLER)
-        print api.getTradeHistory()
+        trades = api.getTradeHistory()
+        json_list = []
+        for trade_obj in trades:
+            obj = {}
+            obj['pair'] = trade_obj.pair
+            obj['type'] = trade_obj.type
+            obj['amount'] = float(trade_obj.amount)
+            obj['rate'] = float(trade_obj.rate)
+            obj['time'] = str(trade_obj.timestamp)
+            json_list.append(obj)
+        print json_list
+        return json.dumps(json_list)
+
+
     
     return "hello"
 
