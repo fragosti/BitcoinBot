@@ -14,6 +14,7 @@ from bot.wrappers import simwrapper
 from bot.bot import Bot
 from bot import defaults
 from bot.algorithms import *
+from bot.algorithms.random import Random
 from bot.async import run_async
 import settings
 
@@ -64,7 +65,7 @@ def new_bot(algorithm):
     if algorithm == 'basic':
         algorithm_obj = BasicAlgo(api)
     if algorithm == 'random':
-        algorithm_obj = BasicAlgo(api)
+        algorithm_obj = Random(api)
     return Bot(algorithm_obj, "ppc_usd")
 
 def get_api_key(id):
@@ -306,7 +307,11 @@ def add_key():
         return redirect(url_for('dashboard'))
 
 def update_key():
-    api_key = get_api_key(session['user_id'])
+    api_key = None
+    if 'user_id' in session:
+        api_key = get_api_key(session['user_id'])
+    else:
+        return False
     if api_key:
         HANDLER.addKey(str(api_key['key']), str(api_key['secret']), 1)
         return True

@@ -117,13 +117,11 @@ font-size: 15px;
 
     {% if flashes %}
  
-      <ul >
       {% for message in flashes %}
-        <li class="label label-success" >{{ message }}
+        <div class="alert alert-success" >{{ message }}</div>
 
       {% endfor %}
       
-      </ul>
     
     {% endif %}
   {% endwith %}
