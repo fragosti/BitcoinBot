@@ -5,6 +5,7 @@
 $('document').ready(function(){
 
   function load(){
+      $('#chart').html('');
       var jsonData;
     $.get('/api/tickers', function(response){
       jsonData = JSON.parse(response);
