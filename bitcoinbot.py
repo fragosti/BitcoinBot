@@ -385,4 +385,4 @@ if __name__ == '__main__':
     #init_bots()
     #init_db() 
     collect_data()
-    app.run()
+    app.run(host='0.0.0.0')
