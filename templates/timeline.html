@@ -48,16 +48,32 @@
       <dd><input name="abs_ceiling" type=number></dd>
 
       <dt>Algorithm</dt>
-      <select>
+      <dd><select name="algorithm">
         <option value="random">Random</option>
         <option value="basic">Moving Average</option>
-      </select>
+      </select></dd>
     </dl>
   <button type="submit" class="btn btn-success">Add Bot</button>
   </form>
 
 
 <div id="chart"> </div>
+
+
+
+<ul class="nav nav-tabs">
+  {% for bot in bots %}
+    <li><a href="#{{ bot.bot_id }}" data-toggle="tab">{{ bot.bot_name}}</a></li>
+  {% endfor %}
+  
+</ul>
+
+<!-- Tab panes -->
+<div class="tab-content">
+  {% for bot in bots%}
+  <div class="tab-pane" id="{{ bot.bot_id }}"> Some content </div>
+  {% endfor %}
+</div>
 
 
 

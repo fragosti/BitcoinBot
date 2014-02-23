@@ -104,7 +104,13 @@ def dashboard():
     if len(message) > 0:
         message = message[0]
 
-    return render_template('timeline.html', message=message)
+    bots = query_db('''
+        select bot.* from bot 
+        where owner_id = ?''',
+        [session['user_id']])
+
+    print bots
+    return render_template('timeline.html', message=message, bots=bots)
 
 
 @app.route('/landing')
@@ -175,8 +181,19 @@ def unfollow_user(username):
 
 @app.route('/bot', methods=['POST', 'GET'])
 def bot():
-    pass
-
+    if request.method == 'POST' and session['user_id']:
+        db = get_db()
+        form = request.form
+        print form
+        db.execute(''' insert into bot 
+            (bot_name, owner_id, trade_amount, floor, ceiling, abs_floor, abs_ceiling, algorithm)
+            values (?, ?, ?, ?, ?, ?, ?, ?)''',
+            (form['bot_name'], session['user_id'], form['trade_amount'], form['floor'], form['ceiling'], form['abs_floor'], form['abs_ceiling'], form['algorithm']))
+        db.commit()
+        flash('Your bot ' + form['bot_name']+' was added!')
+        return redirect(url_for('dashboard'))
+    if request.method == 'GET':
+        pass
 
 @app.route('/add_key', methods=['POST', 'GET'])
 def add_key():
