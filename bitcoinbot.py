@@ -13,6 +13,7 @@ from bot.wrappers import simwrapper
 from bot.bot import Bot
 from bot import defaults
 from bot.algorithms import *
+from bot.async import run_async
 import settings
 
 
@@ -21,6 +22,7 @@ DATABASE = 'bitcoinbot.db'
 PER_PAGE = 30
 DEBUG = True
 SECRET_KEY = 'development key'
+DATA_COLLECT = True
 
 BOT_DICT = {}
 HANDLER = btceapi.KeyHandler(resaveOnDeletion=True)
@@ -75,6 +77,25 @@ def get_api_key(id):
         flash("You must submit your API keys")
         return False
 
+@run_async
+def collect_data():
+    while DATA_COLLECT:
+        try:
+            ticker = btceapi.getTicker("ppc_usd")
+            data = {
+                'high': float(ticker.high),
+                'low' : float(ticker.low),
+                'avg' : float(ticker.avg),
+                'last': float(ticker.last),
+                'time' : str(ticker.server_time)
+            }
+            with open('tickers.json', 'w') as outfile:
+                json.dump(data, outfile)
+            time.sleep(10)
+        except:
+            print "datacollection failed"
+            traceback.print_exc(file=sys.stdout)
+
 def get_bots():
     bots = query_db('''
         select bot.* from bot 
@@ -128,7 +149,6 @@ def get_transaction_history():
             obj['rate'] = float(trade_obj.rate)
             obj['time'] = str(trade_obj.timestamp)
             json_list.append(obj)
-        print json_list
         return json.dumps(json_list)
 
 
@@ -405,5 +425,5 @@ app.jinja_env.filters['gravatar'] = gravatar_url
 if __name__ == '__main__':
     #init_bots()
     #init_db() 
-    #collect_data()
+    collect_data()
     app.run()
