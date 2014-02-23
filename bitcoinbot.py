@@ -332,7 +332,8 @@ def add_key():
 
 def update_key():
     api_key = get_api_key(session['user_id'])
-    HANDLER.addKey(str(api_key['key']), str(api_key['secret']), 1)
+    if api_key:
+        HANDLER.addKey(str(api_key['key']), str(api_key['secret']), 1)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
