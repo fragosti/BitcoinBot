@@ -158,10 +158,7 @@ def get_transaction_history():
             obj['time'] = str(trade_obj.timestamp)
             json_list.append(obj)
         return json.dumps(json_list)
-
-
-    
-    return "hello"
+    return json.dumps("error")
 
 @app.route('/api/tickers')
 def get_tickers():

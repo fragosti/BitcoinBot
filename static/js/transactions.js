@@ -3,6 +3,9 @@ $('document').ready(function(){
 
 	function loadtransactions() {
 		$.get('/api/transaction_history', function(response){
+			if (response == 'error'){
+				return
+			}
 			var html = "";
 			response = JSON.parse(response)
 		
